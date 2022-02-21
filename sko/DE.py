@@ -35,15 +35,15 @@ class DE(GeneticAlgorithmBase):
     def ranking(self):
         pass
 
-    def mutation(self):
+    def mutation(self, idx):
         '''
         V[i]=X[r1]+F(X[r2]-X[r3]),
         where i, r1, r2, r3 are randomly generated
         '''
         X = self.X
-        # i is not needed,
-        # and TODO: r1, r2, r3 should not be equal
-        random_idx = np.random.randint(0, self.size_pop, size=(self.size_pop, 3))
+        random_idx = np.ones([self.size_pop, 3], dtype=int)
+        for i in range(self.size_pop):
+            random_idx[i] = np.random.choice(np.delete(np.arange(30), i), 3, replace=False)
 
         r1, r2, r3 = random_idx[:, 0], random_idx[:, 1], random_idx[:, 2]
 
