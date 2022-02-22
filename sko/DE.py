@@ -35,7 +35,7 @@ class DE(GeneticAlgorithmBase):
     def ranking(self):
         pass
 
-    def mutation(self, idx):
+    def mutation(self):
         '''
         V[i]=X[r1]+F(X[r2]-X[r3]),
         where i, r1, r2, r3 are randomly generated
@@ -43,7 +43,7 @@ class DE(GeneticAlgorithmBase):
         X = self.X
         random_idx = np.ones([self.size_pop, 3], dtype=int)
         for i in range(self.size_pop):
-            random_idx[i] = np.random.choice(np.delete(np.arange(30), i), 3, replace=False)
+            random_idx[i] = np.random.choice(np.delete(np.arange(self.size_pop), i), 3, replace=False)
 
         r1, r2, r3 = random_idx[:, 0], random_idx[:, 1], random_idx[:, 2]
 
@@ -73,7 +73,7 @@ class DE(GeneticAlgorithmBase):
         self.X = U = self.U
         f_U = self.x2y()
 
-        self.X = np.where((f_X < f_U).reshape(-1, 1), X, U)
+        self.X = np.where((f_X > f_U).reshape(-1, 1), X, U)
         return self.X
 
     def run(self, max_iter=None):
@@ -84,12 +84,12 @@ class DE(GeneticAlgorithmBase):
             self.selection()
 
             # record the best ones
-            generation_best_index = self.Y.argmin()
+            generation_best_index = self.Y.argmax()
             self.generation_best_X.append(self.X[generation_best_index, :].copy())
             self.generation_best_Y.append(self.Y[generation_best_index])
             self.all_history_Y.append(self.Y)
 
-        global_best_index = np.array(self.generation_best_Y).argmin()
+        global_best_index = np.array(self.generation_best_Y).argmax()
         self.best_x = self.generation_best_X[global_best_index]
         self.best_y = self.func(np.array([self.best_x]))
         return self.best_x, self.best_y
